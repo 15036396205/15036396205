@@ -18,7 +18,7 @@ class Tenpay extends \Think\Pay\Pay {
                 return true;
         }
 
-        public function getUrl(\Think\Pay\PayVo $vo) {
+        public function buildRequestForm(\Think\Pay\PayVo $vo) {
                 $param = array(
                     'input_charset' => "UTF-8",
                     'body' => $vo->getBody(),
@@ -35,15 +35,16 @@ class Tenpay extends \Think\Pay\Pay {
                 reset($param);
 
                 $arg = '';
-                $url = $this->gateway . "?";
                 foreach ($param as $key => $value) {
                         if ($value) {
-                                $url .= "$key=" . urlencode($value) . "&";
                                 $arg .= "$key=$value&";
                         }
                 }
-                $url .= 'sign=' . strtoupper(md5($arg . 'key=' . $this->config['key']));
-                return $url;
+                $param['sign'] = strtoupper(md5($arg . 'key=' . $this->config['key']));
+
+                $sHtml = $this->_buildForm($param, $this->gateway);
+
+                return $sHtml;
         }
 
         /**

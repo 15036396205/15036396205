@@ -42,18 +42,20 @@ class Pay {
          */
         public function __construct($driver, $config = array()) {
                 /* 配置 */
-                $apitype = strtolower(substr($driver, strrpos($driver, '\\') + 1));
+                $pos = strrpos($driver, '\\');
+                $pos = $pos === false ? 0 : $pos + 1;
+                $apitype = strtolower(substr($driver, $pos));
                 $this->config['notify_url'] = U("Home/Public/notify", array('apitype' => $apitype, 'method' => 'notify'), false, true);
                 $this->config['return_url'] = U("Home/Public/notify", array('apitype' => $apitype, 'method' => 'return'), false, true);
 
-                $config = array($this->config, $config);
+                $config = array_merge($this->config, $config);
 
                 /* 设置支付驱动 */
                 $class = strpos($driver, '\\') ? $driver : 'Think\\Pay\\Driver\\' . ucfirst(strtolower($driver));
                 $this->setDriver($class, $config);
         }
 
-        public function getUrl(Pay\PayVo $vo) {
+        public function buildRequestForm(Pay\PayVo $vo) {
                 $this->payer->check();
                 //生成本地记录数据
                 $check = M("Pay")->add(array(
@@ -68,7 +70,7 @@ class Pay {
                 ));
 
                 if ($check !== false) {
-                        return $this->payer->getUrl($vo);
+                        return $this->payer->buildRequestForm($vo);
                 } else {
                         E(M("Pay")->getDbError());
                 }

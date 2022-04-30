@@ -12,7 +12,7 @@ class PublicController extends Controller {
         public function notify() {
                 $apitype = I('get.apitype');
 
-                $pay = new \Think\Pay($apitype);
+                $pay = new \Think\Pay($apitype, C('payment.' . $apitype));
                 if (IS_POST && !empty($_POST)) {
                         $notify = $_POST;
                 } elseif (IS_GET && !empty($_GET)) {

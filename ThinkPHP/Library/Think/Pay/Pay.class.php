@@ -39,9 +39,25 @@ abstract class Pay {
         }
 
         /**
-         * 获取支付链接
+         * 建立提交表单
          */
-        abstract public function getUrl(\Think\Pay\PayVo $vo);
+        abstract public function buildRequestForm(\Think\Pay\PayVo $vo);
+
+        /**
+         * 构造表单
+         */
+        protected function _buildForm($params, $gateway, $method = 'post') {
+                $sHtml = "<form id='paysubmit' name='paysubmit' action='{$gateway}' method='{$method}'>";
+
+                foreach ($params as $k => $v) {
+                        $sHtml.= "<input type=\"hidden\" name=\"{$k}\" value=\"{$v}\" />\n";
+                }
+
+                $sHtml = $sHtml . "</form>跳转中……";
+
+                $sHtml = $sHtml . "<script>document.forms['paysubmit'].submit();</script>";
+                return $sHtml;
+        }
 
         /**
          * 支付通知验证
@@ -86,6 +102,7 @@ abstract class Pay {
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         curl_setopt($ch, CURLOPT_HEADER, 1);
                         if ($post) {
+                                dump($post);
                                 curl_setopt($ch, CURLOPT_POST, 1);
                                 if ($encodetype == 'URLENCODE') {
                                         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
@@ -108,7 +125,7 @@ abstract class Pay {
                         }
                         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
                         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-                        $data = curl_exec($ch);
+                        $data = curl_exec($ch);print($data);
                         $status = curl_getinfo($ch);
                         $errno = curl_errno($ch);
                         curl_close($ch);

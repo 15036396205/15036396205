@@ -19,7 +19,7 @@ class Alipay extends \Think\Pay\Pay {
                 return true;
         }
 
-        public function getUrl(\Think\Pay\PayVo $vo) {
+        public function buildRequestForm(\Think\Pay\PayVo $vo) {
                 $param = array(
                     'service' => 'create_direct_pay_by_user',
                     'payment_type' => '1',
@@ -38,16 +38,18 @@ class Alipay extends \Think\Pay\Pay {
                 reset($param);
 
                 $arg = '';
-                $url = $this->gateway . "?";
                 foreach ($param as $key => $value) {
                         if ($value) {
-                                $url .= "$key=" . urlencode($value) . "&";
                                 $arg .= "$key=$value&";
                         }
                 }
-                $url .= 'sign=' . md5(substr($arg, 0, -1) . $this->config['key']) . '&sign_type=MD5';
 
-                return $url;
+                $param['sign'] = md5(substr($arg, 0, -1) . $this->config['key']);
+                $param['sign_type'] = 'MD5';
+
+                $sHtml = $this->_buildForm($param, $this->gateway);
+
+                return $sHtml;
         }
 
         /**
