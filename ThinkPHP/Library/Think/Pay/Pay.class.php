@@ -102,7 +102,6 @@ abstract class Pay {
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         curl_setopt($ch, CURLOPT_HEADER, 1);
                         if ($post) {
-                                dump($post);
                                 curl_setopt($ch, CURLOPT_POST, 1);
                                 if ($encodetype == 'URLENCODE') {
                                         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
@@ -125,7 +124,7 @@ abstract class Pay {
                         }
                         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
                         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-                        $data = curl_exec($ch);print($data);
+                        $data = curl_exec($ch);
                         $status = curl_getinfo($ch);
                         $errno = curl_errno($ch);
                         curl_close($ch);
