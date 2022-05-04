@@ -47,7 +47,7 @@ class Alipay extends \Think\Pay\Pay {
                 $param['sign'] = md5(substr($arg, 0, -1) . $this->config['key']);
                 $param['sign_type'] = 'MD5';
 
-                $sHtml = $this->_buildForm($param, $this->gateway);
+                $sHtml = $this->_buildForm($param, $this->gateway,'get');
 
                 return $sHtml;
         }
