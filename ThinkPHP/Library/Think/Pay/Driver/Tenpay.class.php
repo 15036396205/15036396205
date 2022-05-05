@@ -23,8 +23,8 @@ class Tenpay extends \Think\Pay\Pay {
                     'input_charset' => "UTF-8",
                     'body' => $vo->getBody(),
                     'subject' => $vo->getTitle(),
-                    'return_url' => $this->config['notify_url'],
-                    'notify_url' => $this->config['return_url'],
+                    'return_url' => $this->config['return_url'],
+                    'notify_url' => $this->config['notify_url'],
                     'partner' => $this->config['partner'],
                     'out_trade_no' => $vo->getOrderNo(),
                     'total_fee' => $vo->getFee() * 100,
@@ -89,7 +89,7 @@ class Tenpay extends \Think\Pay\Pay {
                 //生成签名结果
                 $isSign = $this->getSignVeryfy($notify, $notify["sign"]);
                 $response = true;
-                if (!empty($notify["notify_id"])) {
+                if (!empty($notify["notify_id"]) && I('get.method') == 'notify') {
                         $response = $this->getResponse($notify["notify_id"], $notify['sign']);
                 }
                 if ($response && $isSign) {
