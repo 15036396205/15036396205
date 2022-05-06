@@ -31,16 +31,7 @@ class Tenpay extends \Think\Pay\Pay {
                     'spbill_create_ip' => get_client_ip()
                 );
 
-                ksort($param);
-                reset($param);
-
-                $arg = '';
-                foreach ($param as $key => $value) {
-                        if ($value) {
-                                $arg .= "$key=$value&";
-                        }
-                }
-                $param['sign'] = strtoupper(md5($arg . 'key=' . $this->config['key']));
+                $param['sign'] = $this->createSign($param);
 
                 $sHtml = $this->_buildForm($param, $this->gateway);
 
@@ -64,18 +55,7 @@ class Tenpay extends \Think\Pay\Pay {
                         }
                 }
 
-                ksort($param_filter);
-                reset($param_filter);
-
-                //把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-                $prestr = "";
-                while (list ($key, $val) = each($param_filter)) {
-                        $prestr.=$key . "=" . $val . "&";
-                }
-                //去掉最后一个&字符
-                $prestr .= "key=" . $this->config['key'];
-
-                $mysgin = strtoupper(md5($prestr));
+                $mysgin = $this->createSign($param_filter);
 
                 if ($mysgin == $sign) {
                         return true;
@@ -89,8 +69,8 @@ class Tenpay extends \Think\Pay\Pay {
                 //生成签名结果
                 $isSign = $this->getSignVeryfy($notify, $notify["sign"]);
                 $response = true;
-                if (!empty($notify["notify_id"]) && I('get.method') == 'notify') {
-                        $response = $this->getResponse($notify["notify_id"], $notify['sign']);
+                if (!empty($notify["notify_id"])) {
+                        $response = $this->getResponse($notify["notify_id"]);
                 }
                 if ($response && $isSign) {
                         $this->setInfo($notify);
@@ -98,6 +78,22 @@ class Tenpay extends \Think\Pay\Pay {
                 } else {
                         return false;
                 }
+        }
+
+        /**
+         * 创建签名
+         * @param type $params
+         */
+        protected function createSign($params) {
+
+                ksort($params);
+                reset($params);
+
+                $arg = '';
+                foreach ($params as $key => $value) {
+                        $arg .= "{$key}={$value}&";
+                }
+                return strtoupper(md5($arg . 'key=' . $this->config['key']));
         }
 
         protected function setInfo($notify) {
@@ -118,10 +114,17 @@ class Tenpay extends \Think\Pay\Pay {
          * true 返回正确信息
          * false 请检查防火墙或者是服务器阻止端口问题以及验证时间是否超过一分钟
          */
-        protected function getResponse($notify_id, $sign) {
+        protected function getResponse($notify_id) {
                 $partner = $this->config['partner'];
+                $params = array(
+                    'input_charset' => 'UTF-8',
+                    'partner' => $partner,
+                    'notify_id' => $notify_id
+                );
+                $sign = $this->createSign($params);
                 $veryfy_url = $this->verify_url . "?input_charset=UTF-8&sign={$sign}&partner=" . $partner . "&notify_id=" . $notify_id;
                 $responseTxt = $this->fsockOpen($veryfy_url);
+
                 $responseTxt = simplexml_load_string($responseTxt);
                 return (int) $responseTxt->retcode == 0;
         }
