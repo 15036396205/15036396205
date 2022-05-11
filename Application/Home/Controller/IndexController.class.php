@@ -21,7 +21,6 @@ class IndexController extends Controller {
                                 ->setCallback("Home/Index/pay")
                                 ->setUrl(U("Home/User/order"))
                                 ->setParam(array('order_id' => "goods1业务订单号"));
-                        header("Content-type:text/html;charset=utf-8");
                         echo $pay->buildRequestForm($vo);
                 } else {
                         //在此之前goods1的业务订单已经生成，状态为等待支付

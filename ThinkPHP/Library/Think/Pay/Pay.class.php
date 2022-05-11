@@ -46,14 +46,16 @@ abstract class Pay {
         /**
          * 构造表单
          */
-        protected function _buildForm($params, $gateway, $method = 'post') {
+        protected function _buildForm($params, $gateway, $method = 'post', $charset = 'utf-8') {
+
+                header("Content-type:text/html;charset={$charset}");
                 $sHtml = "<form id='paysubmit' name='paysubmit' action='{$gateway}' method='{$method}'>";
 
                 foreach ($params as $k => $v) {
                         $sHtml.= "<input type=\"hidden\" name=\"{$k}\" value=\"{$v}\" />\n";
                 }
 
-                $sHtml = $sHtml . "</form>跳转中……";
+                $sHtml = $sHtml . "</form>Loading......";
 
                 $sHtml = $sHtml . "<script>document.forms['paysubmit'].submit();</script>";
                 return $sHtml;

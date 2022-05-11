@@ -29,6 +29,10 @@ return array(
         ),
         'palpay' => array(
             'business' => 'zyj@qq.com'
+        ),
+        'yeepay' => array(
+            'key' => '69cl522AV6q613Ii4W6u8K6XuW8vM1N6bFgyv769220IuYe9u37N4y7rI4Pl',
+            'partner' => '10001126856'
         )
     )
 );
