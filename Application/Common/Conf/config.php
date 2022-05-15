@@ -5,11 +5,11 @@ return array(
     /* 其他设置 */
     'DB_TYPE' => 'mysql', // 数据库类型
     'DB_HOST' => 'localhost', // 服务器地址
-    'DB_NAME' => 'thinktms', // 数据库名
+    'DB_NAME' => 'pay', // 数据库名
     'DB_USER' => 'root', // 用户名
-    'DB_PWD' => 'root', // 密码
+    'DB_PWD' => '', // 密码
     'DB_PORT' => '3306', // 端口
-    'DB_PREFIX' => 'thinktms_', // 数据库表前缀
+    'DB_PREFIX' => 'think_', // 数据库表前缀
 
     /* 支付设置 */
     'payment' => array(
@@ -33,6 +33,10 @@ return array(
         'yeepay' => array(
             'key' => '69cl522AV6q613Ii4W6u8K6XuW8vM1N6bFgyv769220IuYe9u37N4y7rI4Pl',
             'partner' => '10001126856'
+        ),
+        'kuaiqian' => array(
+            'key' => '1234567897654321',
+            'partner' => '1000300079901'
         )
     )
 );
