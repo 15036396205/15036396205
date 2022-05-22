@@ -4,7 +4,7 @@ namespace Think\Pay\Driver;
 
 class Unionpay extends \Think\Pay\Pay {
 
-    protected $gateway = 'http://58.246.226.99/UpopWeb/api/Pay.action';
+    protected $gateway = 'https://unionpaysecure.com/api/Pay.action';
     protected $config = array(
         'key' => '',
         'partner' => ''
@@ -57,7 +57,28 @@ class Unionpay extends \Think\Pay\Pay {
     }
 
     public function verifyNotify($notify) {
-        
+
+        //提取服务器端的签名
+        if (!isset($notify['signature']) || !isset($notify['signMethod'])) {
+            return false;
+        }
+        $sign = $notify['signature'];
+        unset($notify['signature']);
+        unset($notify['signMethod']);
+
+        //验证签名
+        $mysign = $this->createSign($notify);
+        if ($sign != $mysign) {
+            return false;
+        } else {
+            $info = array();
+            //支付状态
+            $info['status'] = $notify['respCode'] == '00' ? true : false;
+            $info['money'] = $notify['orderAmount'] / 100;
+            $info['out_trade_no'] = $notify['orderNumber'];
+            $this->info = $info;
+            return true;
+        }
     }
 
 }
