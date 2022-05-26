@@ -31,7 +31,7 @@ class PublicController extends Controller {
                 $payinfo = M("Pay")->field(true)->where(array('out_trade_no' => $info['out_trade_no']))->find();
                 if ($payinfo['status'] == 0 && $payinfo['callback']) {
                     session("pay_verify", true);
-                    $check = R($payinfo['callback'], array('money' => $info['money'], 'param' => unserialize($payinfo['param'])));
+                    $check = R($payinfo['callback'], array('money' => $payinfo['money'], 'param' => unserialize($payinfo['param'])));
                     if ($check !== false) {
                         M("Pay")->where(array('out_trade_no' => $info['out_trade_no']))->setField(array('update_time' => time(), 'status' => 1));
                     }
