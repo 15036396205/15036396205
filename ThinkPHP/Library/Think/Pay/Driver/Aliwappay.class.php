@@ -45,7 +45,7 @@ class Aliwappay extends Pay {
         $param    = array(
             "service"        => "alipay.wap.trade.create.direct",
             "partner"        => $this->config['partner'],
-            "sec_id"         => "md5",
+            "sec_id"         => "MD5",
             "format"         => "xml",
             "v"              => "2.0",
             "req_id"         => $req_id,
@@ -55,8 +55,13 @@ class Aliwappay extends Pay {
 
         $param['sign'] = $this->createSign($param);
 
-        $return_html   = $this->fsockOpen($this->gateway, "", $param);
-        $return_data   = $this->parseResponse(urldecode($return_html));
+        $return_html = $this->fsockOpen($this->gateway, "", $param);
+        $return_data = $this->parseResponse(urldecode($return_html));
+        if (isset($return_data['res_error'])) {
+            $doc = new \DOMDocument();
+            $doc->loadXML($return_data['res_error']);
+            E('[(' . $doc->getElementsByTagName('code')->item(0)->nodeValue . ')' . $doc->getElementsByTagName('msg')->item(0)->nodeValue . ']' . $doc->getElementsByTagName('detail')->item(0)->nodeValue);
+        }
         //获取request_token
         $request_token = $return_data['request_token'];
         //业务详细
@@ -65,7 +70,7 @@ class Aliwappay extends Pay {
         $param         = array(
             "service"        => "alipay.wap.auth.authAndExecute",
             "partner"        => $this->config['partner'],
-            "sec_id"         => "md5",
+            "sec_id"         => "MD5",
             "format"         => "xml",
             "v"              => "2.0",
             "req_id"         => $req_id,
