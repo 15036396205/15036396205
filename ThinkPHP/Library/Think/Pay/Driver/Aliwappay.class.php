@@ -77,6 +77,7 @@ class Aliwappay extends Pay {
             "req_data"       => $req_data,
             "_input_charset" => 'utf-8'
         );
+        $param['sign'] = $this->createSign($param);
         $sHtml         = $this->_buildForm($param, $this->gateway, 'get');
 
         return $sHtml;
